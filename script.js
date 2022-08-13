@@ -1,47 +1,51 @@
+//Global variables:
 const expressionTemplate = document.querySelector("[data-expression-template]");
 const expressionCardsContainer = document.querySelector("[data-expression-cards-container]");
 const searchInput = document.querySelector("[data-search]");
-
 let latinExpressions = [];
 
 /**
- * This function, called on page load, first takes data from the website "https://jsonplaceholder.typicode.com/albums". Then, it transforms 
- * it into a JSON object (which consists of an array of objects) and, finally, it modifies the "latinExpressions" array (actually, it 
- * creates a new one) by adding the "expression" element as many times as there are elements in the array of JSON objects. All "expression" 
- * elements are placed inside the "expressionCardsContainer".
+ * Fetches from the "https://jsonplaceholder.typicode.com/albums" website all the Latin expressions and for each one of them creates in the 
+ * expressionCardsContainer a card with its title.
  */
- fetch("https://jsonplaceholder.typicode.com/albums").then(res => res.json()).then(data => {
-    latinExpressions = data.map(expression => {
-        const card = expressionTemplate.content.cloneNode(true).children[0];
-        const body = card.querySelector("[data-body]");
-        body.textContent = expression.title;
-        expressionCardsContainer.append(card);
-        return { title: expression.title, element: card };
-    });
-});
+fetch("https://jsonplaceholder.typicode.com/albums").then(res => res.json()).then(data => {
 
-setTimeout(() => {
-    console.log(latinExpressions);
-}, 5000);
+    //The map method more or less mimics the behavior of a typical for loop. A bunch of code is repeated for each data element.
+    latinExpressions = data.map(expression => {
+
+        const card = expressionTemplate.content.cloneNode(true).children[0]; //Creates a "card".
+        const body = card.querySelector("[data-body]");
+        body.textContent = expression.title; //Appends the expression title to the "card" body.
+        expressionCardsContainer.append(card); //Appends the "card" to the expressionCardsContainer.
+
+        //Defines the structure of the expression element (each element of the latinExpressions array has this structure) and returns it.
+        //It's crucial that each expression element is returned because otherwise no element would be added to the latinExpressions
+        //array (and, in order for the following addEventListener to have any effect, it is necessary that the array is not empty). In
+        //other words, without the return statement the Latin expressions are displayed but the search bar doesn't work.
+        return { title: expression.title, element: card }; 
+
+    });
+
+});
 
 /**
- * An Event listener is added to the search bar so that every time the user searches for an expression, the following happens.
+ * Depending on the input value hides or displays Latin expressions (since the Latin expressions are already displayed on the web page when
+ * this addEventListener is triggered, it never really displays Latin expressions, it simply hides some and leaves others as they are).
  */
 searchInput.addEventListener("input", e => {
-    /**
-     * Makes the value target (what is compared to the value) not "case-sensitive", which means that matches between the value and the 
-     * elements of the "latinExpressions" array will occur regardless of whether the user types in upper or lower case.
-     */
-    const value = e.target.value.toLowerCase();
-    /**
-     * For each element in the "latinExpressions" array, if its title does NOT match the input value (what the user types), the CSS class 
-     * "hide" is added to that element. This class is removed from any "expression" element if the input value matches the title of the 
-     * "expression" element.
-     */
+
+    const value = e.target.value.toLowerCase(); //Holds the input value.
+
+    //For each element of the latinExpressions array (for each Latin expression), if the element title doesn't contain/include the
+    //input value, the element is hidden. 
     latinExpressions.forEach(expression => {
-        const isVisible = expression.title.toLowerCase().includes(value);
+
+        //Has a value of "true" if the element title contains/includes the input value and a value of "false" if not.
+        const isVisible = expression.title.toLowerCase().includes(value); 
+
+        //Hides the element if the previous "isVisible" variable has a value of "false".
         expression.element.classList.toggle("hide", !isVisible);
+
     });
+
 });
-
-
