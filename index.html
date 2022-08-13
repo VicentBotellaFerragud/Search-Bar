@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+    <title>Search-Bar</title>
+</head>
+
+<body>
+    <div class="search-wrapper">
+        <label for="search"><h1>Latin expressions</h1></label>
+        <input type="search" id="search" placeholder="Search for a Latin expression..." data-search>
+    </div>
+    <div class="expression-cards " data-expression-cards-container></div>
+    <template data-expression-template>
+        <div class="card">
+            <div class="body" data-body></div>
+        </div>
+    </template>
+</body>
+
+</html>
